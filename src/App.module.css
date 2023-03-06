@@ -1,0 +1,24 @@
+.App {
+  text-align: center;
+  font-family: eightBit;
+}
+
+.header {
+  background-color: yellow;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(20px + 2vmin);
+  color: black;
+}
+
+.link {
+  color: #b318f0;
+}
+
+@font-face {
+  font-family: eightBit;
+  src: url(./assets/PressStart2P-vaV7.ttf);
+}
