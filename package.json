@@ -15,8 +15,7 @@
     "vite-plugin-solid": "^2.5.0"
   },
   "dependencies": {
-    "@types/babylonjs": "^2.4.1",
-    "babylonjs": "^5.49.0",
+    "pixi.js": "^7.2.3",
     "solid-js": "^1.6.10"
   }
 }
