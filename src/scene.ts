@@ -85,23 +85,27 @@ class InputState {
 }
 
 document.addEventListener("keydown", function(event) {
-  switch(event.keyCode) {
-    case 37:
+  switch(event.key) {
+    case 'h':
+    case 'ArrowLeft':
       console.log("Left arrow key was pressed");
       InputState.getInstance().setState(INPUT_STATES.left);
 
       break;
-    case 38:
+    case 'k':
+    case 'ArrowUp':
       console.log("Up arrow key was pressed");
       InputState.getInstance().setState(INPUT_STATES.up);
 
       break;
-    case 39:
+    case 'l':
+    case 'ArrowRight':
       console.log("Right arrow key was pressed");
       InputState.getInstance().setState(INPUT_STATES.right);
 
       break;
-    case 40:
+    case 'j':
+    case 'ArrowDown':
       console.log("Down arrow key was pressed");
       InputState.getInstance().setState(INPUT_STATES.down);
 
