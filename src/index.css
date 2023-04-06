@@ -30,11 +30,13 @@ html, body {
   width: 100%;
 }
 
+@media screen and (min-width: 720px) {
   canvas {
-  /* width: 720px; */
-  /* height: 720px; */
-  /* display: block; */
-  /* margin: auto; */
+    max-width: 720px;
+    max-height: 720px;
+    display: block;
+    margin: auto;
+  }
 }
 
 #header {
