@@ -13,21 +13,42 @@ code {
     monospace;
 }
 
-
 html, body {
   height: 100%;
   margin: 0;
 }
 
-#canvas-container, div {
+#game-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   height: 100%;
 }
 
-canvas {
-  object-fit: cover;
+#canvas-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+  canvas {
+  /* width: 720px; */
+  /* height: 720px; */
   /* display: block; */
-  /* margin: 0 auto; */
+  /* margin: auto; */
+}
+
+#header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px; /* set your desired height */
+  background-color: #fff; /* set your desired background color */
+}
+
+#score-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px; /* set your desired height */
+  background-color: #fff; /* set your desired background color */
 }

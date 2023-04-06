@@ -1,15 +1,43 @@
-import type { Component } from 'solid-js';
+import { Component, createSignal, onMount } from 'solid-js';
 
 import styles from './App.module.css';
-import still from './game_assets/bitman/default/still.png'
-import left from './game_assets/bitman/default/moving_left.png'
-import right from './game_assets/bitman/default/moving_right.png'
+import { initGame } from './scene';
 
 const App: Component = () => {
-  console.log(right);
+  const [score, setScore] = createSignal(0);
+  const [highScore, setHighScore] = createSignal(0);
+
+  const increamentScore = () => {
+    setScore(score() + 1);
+
+    if (score() > highScore()) {
+      setHighScore(score());
+    }
+  }
+
+  const clearScore = () => {
+    setScore(0);
+  }
+
+  onMount(() => {
+    initGame(increamentScore, clearScore);
+  })
+
   return (
     <div class={styles.App}>
-      <div id="canvas-container"></div>
+      <div id="game-container">
+        <div id="header">
+          <h1>BITMAN</h1>
+        </div>
+        <div id="canvas-container"></div>
+        <div id="score-container">
+          <p>
+            high score: {highScore}
+            <br />
+            score: {score()}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

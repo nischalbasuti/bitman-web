@@ -1,142 +1,135 @@
-import * as PIXI from 'pixi.js';
-import { Sprite } from 'pixi.js';
+import { Application, Container, Sprite, Ticker } from 'pixi.js';
+import Bitman from './entities/bitman';
+import Bomb from './entities/bomb';
+import { setupInput } from './inputHandler';
+import InputState, { INPUT_STATES } from './inputState';
+import { TEXTURES } from './TEXTURES';
 
-const config = {
-  width: 1080,
-  height:720 ,
-  backgroundColor: 0xD3D3D3
-}
-const app = new PIXI.Application<HTMLCanvasElement>(config);
-
-const canvasContainer = document.querySelector("#canvas-container");
-canvasContainer.appendChild(app.view);
-
-interface ITextures {
-  [textureName: string]: {
-    [stateName: string]: {
-      still: PIXI.Texture;
-      moveLeft: PIXI.Texture;
-      moveRight: PIXI.Texture;
-    };
-  };
+export function getRandomNumber(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const TEXTURES: ITextures = {
-  bitman: {
-    default: {
-      still: await PIXI.Assets.load("./src/game_assets/bitman/default/still.png"),
-      moveLeft: await PIXI.Assets.load("./src/game_assets/bitman/default/moving_left.png"),
-      moveRight: await PIXI.Assets.load("./src/game_assets/bitman/default/moving_right.png"),
-    },
-    shielded: {
-      still: await PIXI.Assets.load("./src/game_assets/bitman/shielded/still.png"),
-      moveLeft: await PIXI.Assets.load("./src/game_assets/bitman/shielded/moving_left.png"),
-      moveRight: await PIXI.Assets.load("./src/game_assets/bitman/shielded/moving_right.png"),
+export function initGame (increamentScore: Function, clearScore: Function) {
+  setupInput();
+
+  // const screenWidth = window.innerWidth <= 1080 ? window.innerWidth : 1080;
+  // const aspectRatio = 16 / 9;
+  // const screenHeight = screenWidth / aspectRatio;
+  const screenWidth = 720;
+  const screenHeight = 720;
+
+  const app = new Application<HTMLCanvasElement>({
+    width: screenWidth,
+    height: screenHeight,
+    resolution: window.devicePixelRatio,
+    backgroundColor: 0xD3D3D3,
+  });
+
+  const canvasContainer = document.querySelector("#canvas-container");
+  if (canvasContainer) {
+    canvasContainer.appendChild(app.view);
+  } else {
+    throw TypeError("canvasContainer is null");
+  }
+
+  const container = new Container();
+  container.y = screenHeight;
+  app.stage.addChild(container);
+
+  const platform = new Sprite(TEXTURES.platform);
+
+  const scaleFactor = screenWidth / platform.width;
+
+  container.scale.x = scaleFactor;
+  container.scale.y = scaleFactor;
+
+  // alert(scaleFactor);
+
+  platform.anchor.set(0, 1)
+
+  platform.x = 0;
+  platform.y = container.height + platform.height / 3;
+
+  const bitman = new Bitman(app, platform.width / 2, platform.y - platform.height);
+  bitman.sprite.y += bitman.sprite.height / 3
+
+  const bombs = [
+    new Bomb(app, platform.width, -screenHeight),
+    new Bomb(app, platform.width, -screenHeight),
+    new Bomb(app, platform.width, -screenHeight),
+    new Bomb(app, platform.width, -screenHeight),
+    new Bomb(app, platform.width, -screenHeight),
+  ];
+
+  //----------------background------------------------
+
+  const building0 = new Sprite(TEXTURES.building);
+  building0.anchor.set(0, 1)
+  building0.x = building0.width / 3;
+  building0.y = container.height;
+  building0.scale.set(1, 0.8)
+
+
+  const building1 = new Sprite(TEXTURES.building);
+  building1.anchor.set(0, 1)
+  building1.x = building0.x + building0.width * 2;
+  building1.y = container.height;
+  building1.scale.set(0.8, 0.8)
+
+  const building2 = new Sprite(TEXTURES.building);
+  building2.anchor.set(0, 1)
+  building2.x = building1.x + building1.width * 2;
+  building2.y = container.height;
+  building2.scale.set(0.8, 1)
+
+  container.addChild(building0);
+  container.addChild(building1);
+  container.addChild(building2);
+
+  //\----------------background------------------------
+
+  container.addChild(platform);
+  container.addChild(bitman.sprite);
+  for (const bomb of bombs) container.addChild(bomb.sprite);
+
+  function bitmanTicker() {
+    switch(InputState.getInstance().getState()) {
+      case INPUT_STATES.left:
+        bitman.moveLeft();
+
+        break;
+      case INPUT_STATES.right:
+        bitman.moveRight();
+
+        break;
+      case INPUT_STATES.none:
+        bitman.idle();
+
+        break
     }
   }
+
+  app.ticker.add(bitmanTicker);
+
+  app.ticker.add(() => {
+    for (const bomb of bombs) {
+      bomb.update();
+      if (bomb.sprite.y >= platform.y - platform.height - bitman.sprite.height/3) bomb.explode(increamentScore);
+      if (bomb.sprite.getBounds().intersects(bitman.sprite.getBounds())) {
+        bomb.explode();
+        bitman.die()
+
+        app.ticker.stop();
+
+        for (let b of bombs) b.respawn();
+        window.setTimeout(() => {
+          app.ticker.start();
+          clearScore();
+        }, 3_000)
+
+        break;
+      }
+    }
+  });
+
 }
-
-console.log(TEXTURES.bitman.default)
-
-const bitman = new Sprite(TEXTURES.bitman.default.still);
-
-// position
-bitman.x = app.renderer.width / 2;
-bitman.y = app.renderer.height;
-
-// rotate
-bitman.anchor.x = 0.5;
-bitman.anchor.y = 1.0;
-
-// add to scene
-app.stage.addChild(bitman);
-
-const INPUT_STATES = {
-  none: 'none',
-  left: 'left',
-  right: 'right',
-  up: 'up',
-  down: 'down',
-}
-
-class InputState {
-  static #instance: InputState | null = null;
-
-  #currentState;
-
-  static getInstance(): InputState {
-    if (!InputState.#instance) InputState.#instance = new InputState();
-
-    return InputState.#instance;
-  }
-  constructor() {
-    if (InputState.#instance) throw TypeError("Can only create one instance");
-
-    this.#currentState = INPUT_STATES.none;
-  }
-
-  getState() {
-    return this.#currentState;
-  }
-
-  setState(state: string) {
-    this.#currentState = state;
-  }
-}
-
-document.addEventListener("keydown", function(event) {
-  switch(event.key) {
-    case 'h':
-    case 'ArrowLeft':
-      console.log("Left arrow key was pressed");
-      InputState.getInstance().setState(INPUT_STATES.left);
-
-      break;
-    case 'k':
-    case 'ArrowUp':
-      console.log("Up arrow key was pressed");
-      InputState.getInstance().setState(INPUT_STATES.up);
-
-      break;
-    case 'l':
-    case 'ArrowRight':
-      console.log("Right arrow key was pressed");
-      InputState.getInstance().setState(INPUT_STATES.right);
-
-      break;
-    case 'j':
-    case 'ArrowDown':
-      console.log("Down arrow key was pressed");
-      InputState.getInstance().setState(INPUT_STATES.down);
-
-      break;
-  }
-});
-
-
-document.addEventListener("keyup", function(event) {
-  InputState.getInstance().setState(INPUT_STATES.none);
-});
-
-app.ticker.add(() => {
-  switch(InputState.getInstance().getState()) {
-    case INPUT_STATES.left:
-      bitman.x -= 5
-      bitman.texture = TEXTURES.bitman.default.moveLeft;
-
-      break;
-    case INPUT_STATES.right:
-      bitman.x += 5
-      bitman.texture = TEXTURES.bitman.default.moveRight;
-
-      break;
-    case INPUT_STATES.none:
-      bitman.texture = TEXTURES.bitman.default.still;
-
-      break
-
-  }
-})
-
-
-
