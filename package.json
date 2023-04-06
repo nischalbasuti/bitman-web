@@ -6,7 +6,8 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "postbuild": "mkdir ./dist/src && cp -r ./src/game_assets ./dist/src"
   },
   "license": "MIT",
   "devDependencies": {
