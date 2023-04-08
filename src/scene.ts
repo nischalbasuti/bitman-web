@@ -92,14 +92,14 @@ export function initGame (increamentScore: Function, clearScore: Function) {
   container.addChild(bitman.sprite);
   for (const bomb of bombs) container.addChild(bomb.sprite);
 
-  function bitmanTicker() {
+  function bitmanTicker(deltaTime) {
     switch(InputState.getInstance().getState()) {
       case INPUT_STATES.left:
-        bitman.moveLeft();
+        bitman.moveLeft(deltaTime);
 
         break;
       case INPUT_STATES.right:
-        bitman.moveRight();
+        bitman.moveRight(deltaTime);
 
         break;
       case INPUT_STATES.none:
@@ -111,12 +111,12 @@ export function initGame (increamentScore: Function, clearScore: Function) {
 
   app.ticker.add(bitmanTicker);
 
-  app.ticker.add(() => {
+  app.ticker.add((deltaTime) => {
     for (const bomb of bombs) {
-      bomb.update();
+      bomb.update(deltaTime);
       if (bomb.sprite.y >= platform.y - platform.height - bitman.sprite.height/3) bomb.explode(increamentScore);
       if (bomb.sprite.getBounds().intersects(bitman.sprite.getBounds())) {
-        bomb.explode();
+        bomb.explode(null);
         bitman.die()
 
         app.ticker.stop();

@@ -23,8 +23,8 @@ export default class Bitman {
     return this.shield ? TEXTURES.bitman.shielded : TEXTURES.bitman.default;
   }
 
-  moveLeft() {
-    this.sprite.x -= 5
+  moveLeft(deltaTime: number) {
+    this.sprite.x -= 5 * deltaTime;
     if (this.sprite.x > 10) {
       this.sprite.texture = this.#textures().moveLeft;
     } else {
@@ -32,8 +32,9 @@ export default class Bitman {
     }
   }
 
-  moveRight() {
-    this.sprite.x += 5
+  moveRight(deltaTime: number) {
+    this.sprite.x += 5 * deltaTime;
+    console.log(deltaTime)
     if (this.sprite.x < this.app.renderer.width - 10) {
       this.sprite.texture = this.#textures().moveRight;
     } else {

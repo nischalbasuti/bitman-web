@@ -43,7 +43,7 @@ export default class Bomb {
     }
   }
 
-  explode(increamentScore: Function) {
+  explode(increamentScore: Function | null) {
     if (this.#exploading) return;
     this.#exploadStartTime = new Date();
     this.#exploading = true;
@@ -53,10 +53,12 @@ export default class Bomb {
   }
 
   #acceleration = 0;
-  update() {
+  update(deltaTime: number) {
     this.sprite.texture = this.#texture();
 
-    if (!this.#exploading) this.sprite.y += this.#acceleration;
+    debugger;
+
+    if (!this.#exploading) this.sprite.y += this.#acceleration * deltaTime;
     this.#acceleration += 0.05;
   }
 
