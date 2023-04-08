@@ -31,7 +31,7 @@ export const TEXTURES = {
     shielded: {
       still: await Assets.load(bitman_shielded_still),
       moveLeft: await Assets.load(bitman_shielded_moveLeft),
-      moveRight: await Assets.load(bitman_default_moveRight),
+      moveRight: await Assets.load(bitman_shielded_moveRight),
     },
     dead: await Assets.load(dead),
   },
