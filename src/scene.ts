@@ -92,7 +92,7 @@ export function initGame (increamentScore: Function, clearScore: Function) {
   container.addChild(bitman.sprite);
   for (const bomb of bombs) container.addChild(bomb.sprite);
 
-  function bitmanTicker(deltaTime) {
+  function bitmanTicker(deltaTime: number) {
     switch(InputState.getInstance().getState()) {
       case INPUT_STATES.left:
         bitman.moveLeft(deltaTime);
