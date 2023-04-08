@@ -56,8 +56,6 @@ export default class Bomb {
   update(deltaTime: number) {
     this.sprite.texture = this.#texture();
 
-    debugger;
-
     if (!this.#exploading) this.sprite.y += this.#acceleration * deltaTime;
     this.#acceleration += 0.05;
   }

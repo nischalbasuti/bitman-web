@@ -1,4 +1,4 @@
-import { Application, Container, Sprite, Ticker } from 'pixi.js';
+import { Application, Container, Sprite } from 'pixi.js';
 import Bitman from './entities/bitman';
 import Bomb from './entities/bomb';
 import { setupInput } from './inputHandler';
@@ -9,7 +9,7 @@ export function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export function initGame (increamentScore: Function, clearScore: Function) {
+export function initGame (increamentScore: Function, clearScore: Function, canvasContainer: Element) {
   setupInput();
 
   // const screenWidth = window.innerWidth <= 1080 ? window.innerWidth : 1080;
@@ -25,12 +25,7 @@ export function initGame (increamentScore: Function, clearScore: Function) {
     backgroundColor: 0xD3D3D3,
   });
 
-  const canvasContainer = document.querySelector("#canvas-container");
-  if (canvasContainer) {
-    canvasContainer.appendChild(app.view);
-  } else {
-    throw TypeError("canvasContainer is null");
-  }
+  canvasContainer.appendChild(app.view);
 
   const container = new Container();
   container.y = screenHeight;
@@ -42,8 +37,6 @@ export function initGame (increamentScore: Function, clearScore: Function) {
 
   container.scale.x = scaleFactor;
   container.scale.y = scaleFactor;
-
-  // alert(scaleFactor);
 
   platform.anchor.set(0, 1)
 

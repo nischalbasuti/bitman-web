@@ -1,7 +1,7 @@
 import { Component, createSignal, onMount } from 'solid-js';
 
 import styles from './App.module.css';
-import { initGame } from './scene';
+import { initGame } from './game/scene';
 
 const App: Component = () => {
   const [score, setScore] = createSignal(0);
@@ -20,7 +20,8 @@ const App: Component = () => {
   }
 
   onMount(() => {
-    initGame(increamentScore, clearScore);
+    const canvasContainer = document.querySelector("#canvas-container");
+    if (canvasContainer) initGame(increamentScore, clearScore, canvasContainer);
   })
 
   return (
