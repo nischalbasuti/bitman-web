@@ -12,6 +12,7 @@ export function getRandomNumber(min: number, max: number): number {
 export function initGame (increamentScore: Function, clearScore: Function, canvasContainer: Element) {
   setupInput();
 
+  // ...........Add canvas DOM.........................
   // const screenWidth = window.innerWidth <= 1080 ? window.innerWidth : 1080;
   // const aspectRatio = 16 / 9;
   // const screenHeight = screenWidth / aspectRatio;
@@ -26,17 +27,30 @@ export function initGame (increamentScore: Function, clearScore: Function, canva
   });
 
   canvasContainer.appendChild(app.view);
+  //\ ...........Add canvas DOM.........................
 
   const container = new Container();
+  container.x = screenWidth/2;
   container.y = screenHeight;
+
   app.stage.addChild(container);
+
+
+  container.height = screenHeight;
+  container.width = screenWidth;
 
   const platform = new Sprite(TEXTURES.platform);
 
   const scaleFactor = screenWidth / platform.width;
 
-  container.scale.x = scaleFactor;
-  container.scale.y = scaleFactor;
+  container.scale.x = scaleFactor * .95;
+  container.scale.y = scaleFactor * .95;
+
+  container.pivot.set(screenWidth/2, 0);
+
+  window.container = container;
+
+  // debugger
 
   platform.anchor.set(0, 1)
 
@@ -83,9 +97,11 @@ export function initGame (increamentScore: Function, clearScore: Function, canva
 
   container.addChild(platform);
   container.addChild(bitman.sprite);
+
   for (const bomb of bombs) container.addChild(bomb.sprite);
 
   function bitmanTicker(deltaTime: number) {
+    container.pivot.x = bitman.sprite.position.x;
     switch(InputState.getInstance().getState()) {
       case INPUT_STATES.left:
         bitman.moveLeft(deltaTime);

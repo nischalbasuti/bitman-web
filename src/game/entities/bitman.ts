@@ -28,22 +28,34 @@ export default class Bitman {
   }
 
   moveLeft(deltaTime: number) {
-    this.sprite.x -= 5 * deltaTime;
-    if (this.sprite.x > this.sprite.width) {
-      this.sprite.texture = this.#textures().moveLeft;
-    } else {
-      this.sprite.x = this.maxX;
+    const newX = this.sprite.x - 5 * deltaTime;
+
+    if (!this.#isValidX(newX)) {
+      this.idle();
+      return;
     }
+
+    this.sprite.texture = this.#textures().moveLeft;
+    this.sprite.x = newX;
   }
 
   moveRight(deltaTime: number) {
-    this.sprite.x += 5 * deltaTime;
-    console.log(deltaTime)
-    if (this.sprite.x < this.maxX - this.sprite.width) {
-      this.sprite.texture = this.#textures().moveRight;
-    } else {
-      this.sprite.x = 0;
+    const newX = this.sprite.x + 5 * deltaTime;
+
+    if (!this.#isValidX(newX)) {
+      this.idle();
+      return;
     }
+
+    this.sprite.texture = this.#textures().moveRight;
+    this.sprite.x = newX;
+  }
+
+  #isValidX(newX: number) {
+    if (newX > this.maxX - this.sprite.width/2) return false;
+    if (newX < this.sprite.width/2) return false;
+
+    return true;
   }
 
   idle() {
