@@ -1,4 +1,4 @@
-import InputState, { INPUT_STATES } from "./inputState";
+import InputState, { InputStateType } from "./inputState";
 
 export function setupInput() {
   document.addEventListener("keydown", function(event) {
@@ -6,37 +6,37 @@ export function setupInput() {
       case 'h':
       case 'ArrowLeft':
         console.log("Left arrow key was pressed");
-        InputState.getInstance().setState(INPUT_STATES.left);
+        InputState.getInstance().setState(InputStateType.Left);
 
         break;
       case 'k':
       case 'ArrowUp':
         console.log("Up arrow key was pressed");
-        InputState.getInstance().setState(INPUT_STATES.up);
+        InputState.getInstance().setState(InputStateType.Up);
 
         break;
       case 'l':
       case 'ArrowRight':
         console.log("Right arrow key was pressed");
-        InputState.getInstance().setState(INPUT_STATES.right);
+        InputState.getInstance().setState(InputStateType.Right);
 
         break;
       case 'j':
       case 'ArrowDown':
         console.log("Down arrow key was pressed");
-        InputState.getInstance().setState(INPUT_STATES.down);
+        InputState.getInstance().setState(InputStateType.Down);
 
         break;
       case 's': // only for debugging!
         console.log("s")
-        InputState.getInstance().setState(INPUT_STATES.none);
+        InputState.getInstance().setState(InputStateType.None);
 
         break;
     }
   });
 
   document.addEventListener("keyup", function() {
-    InputState.getInstance().setState(INPUT_STATES.none);
+    InputState.getInstance().setState(InputStateType.None);
   });
 
   if (window.DeviceOrientationEvent) {
@@ -54,11 +54,11 @@ export function setupInput() {
       }
 
       if (gamma > 0) {
-        InputState.getInstance().setState(INPUT_STATES.right);
+        InputState.getInstance().setState(InputStateType.Right);
       } else if (gamma < 0) {
-        InputState.getInstance().setState(INPUT_STATES.left);
+        InputState.getInstance().setState(InputStateType.Left);
       } else {
-        InputState.getInstance().setState(INPUT_STATES.none);
+        InputState.getInstance().setState(InputStateType.None);
         console.log('Device not tilted');
       }
     });

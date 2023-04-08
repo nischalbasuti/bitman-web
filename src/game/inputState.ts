@@ -1,15 +1,15 @@
-export const INPUT_STATES = {
-  none: 'none',
-  left: 'left',
-  right: 'right',
-  up: 'up',
-  down: 'down',
+export enum InputStateType {
+  None,
+  Left,
+  Right,
+  Up,
+  Down,
 }
 
 export default class InputState {
   static #instance: InputState | null = null;
 
-  #currentState;
+  #currentState: InputStateType;
 
   static getInstance(): InputState {
     if (!InputState.#instance) InputState.#instance = new InputState();
@@ -19,14 +19,14 @@ export default class InputState {
   constructor() {
     if (InputState.#instance) throw TypeError("Can only create one instance");
 
-    this.#currentState = INPUT_STATES.none;
+    this.#currentState = InputStateType.None;
   }
 
   getState() {
     return this.#currentState;
   }
 
-  setState(state: string) {
+  setState(state: InputStateType) {
     this.#currentState = state;
   }
 }

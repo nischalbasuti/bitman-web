@@ -2,7 +2,7 @@ import { Application, Container, Sprite } from 'pixi.js';
 import Bitman from './entities/bitman';
 import Bomb from './entities/bomb';
 import { setupInput } from './inputHandler';
-import InputState, { INPUT_STATES } from './inputState';
+import InputState, { InputStateType } from './inputState';
 import { TEXTURES } from './TEXTURES';
 
 export function initGame (increamentScore: () => number, clearScore: () => number, canvasContainer: Element) {
@@ -95,15 +95,15 @@ export function initGame (increamentScore: () => number, clearScore: () => numbe
   function bitmanTicker(deltaTime: number) {
     container.pivot.x = bitman.sprite.position.x;
     switch(InputState.getInstance().getState()) {
-      case INPUT_STATES.left:
+      case InputStateType.Left:
         bitman.moveLeft(deltaTime);
 
         break;
-      case INPUT_STATES.right:
+      case InputStateType.Right:
         bitman.moveRight(deltaTime);
 
         break;
-      case INPUT_STATES.none:
+      case InputStateType.None:
         bitman.idle();
 
         break
