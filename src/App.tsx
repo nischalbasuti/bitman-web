@@ -1,7 +1,7 @@
 import { Component, createSignal, onMount } from 'solid-js';
 
 import styles from './App.module.css';
-import { initGame } from './game/scene';
+import { initGame } from './game/game';
 
 const App: Component = () => {
   const [score, setScore] = createSignal(0);
@@ -13,10 +13,16 @@ const App: Component = () => {
     if (score() > highScore()) {
       setHighScore(score());
     }
+
+    return score();
   }
 
   const clearScore = () => {
+    const lastScore = score();
+
     setScore(0);
+
+    return lastScore;
   }
 
   onMount(() => {

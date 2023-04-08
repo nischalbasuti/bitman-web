@@ -5,7 +5,7 @@ export default class Bitman {
   sprite: Sprite;
   app: Application;
 
-  shield: boolean = false;
+  shield = false;
 
   maxX: number;
 

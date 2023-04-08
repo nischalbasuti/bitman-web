@@ -30,13 +30,12 @@ export function setupInput() {
       case 's': // only for debugging!
         console.log("s")
         InputState.getInstance().setState(INPUT_STATES.none);
-        bitman.shield = !bitman.shield;
 
         break;
     }
   });
 
-  document.addEventListener("keyup", function(event) {
+  document.addEventListener("keyup", function() {
     InputState.getInstance().setState(INPUT_STATES.none);
   });
 

@@ -1,13 +1,19 @@
 import { Application, Sprite } from 'pixi.js';
-import { getRandomNumber } from '../scene';
+import { getRandomNumber } from '../utils';
 import { TEXTURES } from '../TEXTURES';
 
 export default class Bomb {
   sprite: Sprite;
   app: Application;
 
-  maxX: number;
-  maxY: number;
+  #maxX: number;
+  #maxY: number;
+
+  #acceleration = 0;
+
+  #exploading = false;
+  #exploadingFrame = 0;
+  #exploadStartTime: Date = new Date();
 
   constructor(app: Application, maxX: number, maxY: number) {
     this.sprite = new Sprite(TEXTURES.bomb.idle);
@@ -15,17 +21,13 @@ export default class Bomb {
     this.sprite.anchor.x = 0.5;
     this.sprite.anchor.y = 0.5;
 
-    this.maxX = maxX;
-    this.maxY = maxY;
+    this.#maxX = maxX;
+    this.#maxY = maxY;
 
     this.app = app;
 
     this.respawn();
   }
-
-  #exploading: boolean = false;
-  #exploadingFrame: number = 0;
-  #exploadStartTime: Date = new Date();
 
   #texture() {
     if (this.#exploading) {
@@ -43,7 +45,7 @@ export default class Bomb {
     }
   }
 
-  explode(increamentScore: Function | null) {
+  explode(increamentScore: (() => number) | null) {
     if (this.#exploading) return;
     this.#exploadStartTime = new Date();
     this.#exploading = true;
@@ -52,7 +54,6 @@ export default class Bomb {
     if (increamentScore) increamentScore();
   }
 
-  #acceleration = 0;
   update(deltaTime: number) {
     this.sprite.texture = this.#texture();
 
@@ -65,8 +66,8 @@ export default class Bomb {
     this.#exploading = false;
     this.#acceleration = 0;
     this.sprite.texture = TEXTURES.bomb.idle;
-    this.sprite.x = getRandomNumber(0, this.maxX)
-    this.sprite.y = getRandomNumber(this.maxY, this.maxY - 100)
+    this.sprite.x = getRandomNumber(0, this.#maxX)
+    this.sprite.y = getRandomNumber(this.#maxY, this.#maxY - 100)
   }
 }
 

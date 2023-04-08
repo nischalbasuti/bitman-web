@@ -5,11 +5,7 @@ import { setupInput } from './inputHandler';
 import InputState, { INPUT_STATES } from './inputState';
 import { TEXTURES } from './TEXTURES';
 
-export function getRandomNumber(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-export function initGame (increamentScore: Function, clearScore: Function, canvasContainer: Element) {
+export function initGame (increamentScore: () => number, clearScore: () => number, canvasContainer: Element) {
   setupInput();
 
   // ...........Add canvas DOM.........................
@@ -47,10 +43,6 @@ export function initGame (increamentScore: Function, clearScore: Function, canva
   container.scale.y = scaleFactor * .95;
 
   container.pivot.set(screenWidth/2, 0);
-
-  window.container = container;
-
-  // debugger
 
   platform.anchor.set(0, 1)
 
@@ -130,7 +122,7 @@ export function initGame (increamentScore: Function, clearScore: Function, canva
 
         app.ticker.stop();
 
-        for (let b of bombs) b.respawn();
+        for (const b of bombs) b.respawn();
         window.setTimeout(() => {
           app.ticker.start();
           clearScore();
