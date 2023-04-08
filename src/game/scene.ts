@@ -43,7 +43,7 @@ export function initGame (increamentScore: Function, clearScore: Function, canva
   platform.x = 0;
   platform.y = container.height + platform.height / 3;
 
-  const bitman = new Bitman(app, platform.width / 2, platform.y - platform.height);
+  const bitman = new Bitman(app, platform.width / 2, platform.y - platform.height, platform.width);
   bitman.sprite.y += bitman.sprite.height / 3
 
   const bombs = [

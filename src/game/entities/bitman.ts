@@ -7,11 +7,15 @@ export default class Bitman {
 
   shield: boolean = false;
 
-  constructor(app: Application, x: number, y: number) {
+  maxX: number;
+
+  constructor(app: Application, x: number, y: number, maxX: number) {
     this.sprite = new Sprite(TEXTURES.bitman.default.still);
 
     this.sprite.x = x;
     this.sprite.y = y;
+
+    this.maxX = maxX;
 
     this.sprite.anchor.x = 0.5;
     this.sprite.anchor.y = 1.0;
@@ -25,17 +29,17 @@ export default class Bitman {
 
   moveLeft(deltaTime: number) {
     this.sprite.x -= 5 * deltaTime;
-    if (this.sprite.x > 10) {
+    if (this.sprite.x > this.sprite.width) {
       this.sprite.texture = this.#textures().moveLeft;
     } else {
-      this.sprite.x = this.app.renderer.width;
+      this.sprite.x = this.maxX;
     }
   }
 
   moveRight(deltaTime: number) {
     this.sprite.x += 5 * deltaTime;
     console.log(deltaTime)
-    if (this.sprite.x < this.app.renderer.width - 10) {
+    if (this.sprite.x < this.maxX - this.sprite.width) {
       this.sprite.texture = this.#textures().moveRight;
     } else {
       this.sprite.x = 0;
