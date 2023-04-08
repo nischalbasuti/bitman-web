@@ -23,6 +23,12 @@ export default class Bitman {
     this.app = app;
   }
 
+  reset() {
+    this.idle();
+
+    this.sprite.x = this.maxX / 2;
+  }
+
   #textures() {
     return this.shield ? TEXTURES.bitman.shielded : TEXTURES.bitman.default;
   }

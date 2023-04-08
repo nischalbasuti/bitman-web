@@ -122,8 +122,9 @@ export function initGame (increamentScore: () => number, clearScore: () => numbe
 
         app.ticker.stop();
 
-        for (const b of bombs) b.respawn();
         window.setTimeout(() => {
+          for (const b of bombs) b.respawn();
+          bitman.reset();
           app.ticker.start();
           clearScore();
         }, 3_000)
