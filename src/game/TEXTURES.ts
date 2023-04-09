@@ -1,25 +1,27 @@
 import { Assets } from "pixi.js"
 
-import bitman_default_still from "./game_assets/bitman/default/still.png"
-import bitman_default_moveLeft from "./game_assets/bitman/default/moving_left.png"
-import bitman_default_moveRight from "./game_assets/bitman/default/moving_right.png"
+import bitman_default_still from "./assets/bitman/default/still.png"
+import bitman_default_moveLeft from "./assets/bitman/default/moving_left.png"
+import bitman_default_moveRight from "./assets/bitman/default/moving_right.png"
 
-import bitman_shielded_still from    "./game_assets/bitman/shielded/still.png"
-import bitman_shielded_moveLeft from "./game_assets/bitman/shielded/moving_left.png"
-import bitman_shielded_moveRight from "./game_assets/bitman/shielded/moving_right.png"
+import bitman_shielded_still from    "./assets/bitman/shielded/still.png"
+import bitman_shielded_moveLeft from "./assets/bitman/shielded/moving_left.png"
+import bitman_shielded_moveRight from "./assets/bitman/shielded/moving_right.png"
 
-import dead from "./game_assets/bitman/default/dead.png"
+import dead from "./assets/bitman/default/dead.png"
 
-import platform from "./game_assets/platform.png"
-import building from "./game_assets/building.png"
-import background from "./game_assets/background.png"
+import platform from "./assets/platform.png"
+import building from "./assets/building.png"
+import background from "./assets/background.png"
 
-import bomb_expload_0 from "./game_assets/bomb/explosion_frames/0.png"
-import bomb_expload_1 from "./game_assets/bomb/explosion_frames/1.png"
-import bomb_expload_2 from "./game_assets/bomb/explosion_frames/2.png"
-import bomb_expload_3 from "./game_assets/bomb/explosion_frames/3.png"
-import bomb_expload_4 from "./game_assets/bomb/explosion_frames/4.png"
-import bomb_expload_5 from "./game_assets/bomb/explosion_frames/5.png"
+import bomb_expload_0 from "./assets/bomb/explosion_frames/0.png"
+import bomb_expload_1 from "./assets/bomb/explosion_frames/1.png"
+import bomb_expload_2 from "./assets/bomb/explosion_frames/2.png"
+import bomb_expload_3 from "./assets/bomb/explosion_frames/3.png"
+import bomb_expload_4 from "./assets/bomb/explosion_frames/4.png"
+import bomb_expload_5 from "./assets/bomb/explosion_frames/5.png"
+
+import shield from "./assets/shield.png"
 
 export const TEXTURES = {
   bitman: {
@@ -46,6 +48,7 @@ export const TEXTURES = {
       await Assets.load(bomb_expload_5),
     ]
   },
+  shield: await Assets.load(shield),
   platform: await Assets.load(platform),
   building: await Assets.load(building),
   background: await Assets.load(background),

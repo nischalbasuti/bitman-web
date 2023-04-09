@@ -1,6 +1,6 @@
 import { Application, Container, Sprite } from 'pixi.js';
-import Bitman from './entities/bitman';
-import Bomb from './entities/bomb';
+import Bitman from './entities/Bitman';
+import Bomb from './entities/Bomb';
 import { setupInput } from './inputHandler';
 import InputState, { InputStateType } from './inputState';
 import { TEXTURES } from './TEXTURES';
