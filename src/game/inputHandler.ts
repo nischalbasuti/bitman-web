@@ -1,5 +1,8 @@
 import InputState, { InputStateType } from "./inputState";
 
+// Threshold for device tilt in degrees - tilts below this value won't trigger movement
+const TILT_THRESHOLD = 10;
+
 export function setupInput() {
   document.addEventListener("keydown", function(event) {
     switch(event.key) {
@@ -53,13 +56,16 @@ export function setupInput() {
         return;
       }
 
-      if (gamma > 0) {
-        InputState.getInstance().setState(InputStateType.Right);
-      } else if (gamma < 0) {
-        InputState.getInstance().setState(InputStateType.Left);
+      // Only trigger movement if tilt exceeds threshold (dead zone)
+      if (Math.abs(gamma) > TILT_THRESHOLD) {
+        if (gamma > 0) {
+          InputState.getInstance().setState(InputStateType.Right);
+        } else {
+          InputState.getInstance().setState(InputStateType.Left);
+        }
       } else {
+        // Within threshold range - no movement (dead zone)
         InputState.getInstance().setState(InputStateType.None);
-        console.log('Device not tilted');
       }
     });
   } else {
