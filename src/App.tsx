@@ -30,6 +30,25 @@ const saveHighScore = (difficulty: number, score: number) => {
   }
 };
 
+// Get deploy time from environment variable (set during build)
+const DEPLOY_TIME = import.meta.env.VITE_DEPLOY_TIME || new Date().toISOString();
+
+const formatDeployTime = (timeString: string): string => {
+  try {
+    const date = new Date(timeString);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZoneName: 'short'
+    });
+  } catch {
+    return 'Unknown';
+  }
+};
+
 const App: Component = () => {
   const [score, setScore] = createSignal(0);
   const [highScores, setHighScores] = createSignal<HighScores>({});
@@ -125,6 +144,7 @@ const App: Component = () => {
         <div id="game-container">
           <div id="header">
             <h1>BITMAN</h1>
+            <p class={styles.deployTime}>Deployed: {formatDeployTime(DEPLOY_TIME)}</p>
           </div>
           <div id="canvas-container"></div>
           <div id="score-container">
@@ -147,6 +167,7 @@ const App: Component = () => {
         <div class={styles.homeScreen}>
           <div class={styles.homeScreenContent}>
             <h1 class={styles.title}>BITMAN</h1>
+            <p class={styles.deployTime}>Deployed: {formatDeployTime(DEPLOY_TIME)}</p>
             <h2 class={styles.subtitle}>Select Difficulty</h2>
             <div class={styles.difficultyButtons}>
               <button 

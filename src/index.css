@@ -42,10 +42,17 @@ html, body {
 
 #header {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 80px; /* set your desired height */
+  min-height: 80px; /* set your desired height */
   background-color: #fff; /* set your desired background color */
+  padding: 0.5rem 0;
+}
+
+#header h1 {
+  margin: 0;
+  font-size: 1.5rem;
 }
 
 #score-container {
