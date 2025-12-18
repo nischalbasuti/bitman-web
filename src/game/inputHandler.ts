@@ -1,7 +1,7 @@
 import InputState, { InputStateType } from "./inputState";
 
 // Threshold for device tilt in degrees - tilts below this value won't trigger movement
-const TILT_THRESHOLD = 10;
+const TILT_THRESHOLD = 5;
 
 export function setupInput() {
   document.addEventListener("keydown", function(event) {
