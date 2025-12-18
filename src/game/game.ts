@@ -114,13 +114,16 @@ export function initGame (
     // Parallax scrolling: move background at slower rate
     backgroundContainer.pivot.x = bitmanX * parallaxFactor;
     
-    switch(InputState.getInstance().getState()) {
+    const inputState = InputState.getInstance();
+    const tiltAmount = inputState.getTiltAmount();
+    
+    switch(inputState.getState()) {
       case InputStateType.Left:
-        bitman.moveLeft(deltaTime);
+        bitman.moveLeft(deltaTime, tiltAmount);
 
         break;
       case InputStateType.Right:
-        bitman.moveRight(deltaTime);
+        bitman.moveRight(deltaTime, tiltAmount);
 
         break;
       case InputStateType.None:

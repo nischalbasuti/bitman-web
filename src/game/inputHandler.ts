@@ -2,6 +2,8 @@ import InputState, { InputStateType } from "./inputState";
 
 // Threshold for device tilt in degrees - tilts below this value won't trigger movement
 const TILT_THRESHOLD = 5;
+// Maximum tilt angle for full speed (degrees)
+const MAX_TILT = 45;
 
 export function setupInput() {
   document.addEventListener("keydown", function(event) {
@@ -9,7 +11,7 @@ export function setupInput() {
       case 'h':
       case 'ArrowLeft':
         console.log("Left arrow key was pressed");
-        InputState.getInstance().setState(InputStateType.Left);
+        InputState.getInstance().setState(InputStateType.Left, 1.0);
 
         break;
       case 'k':
@@ -21,7 +23,7 @@ export function setupInput() {
       case 'l':
       case 'ArrowRight':
         console.log("Right arrow key was pressed");
-        InputState.getInstance().setState(InputStateType.Right);
+        InputState.getInstance().setState(InputStateType.Right, 1.0);
 
         break;
       case 'j':
@@ -39,7 +41,7 @@ export function setupInput() {
   });
 
   document.addEventListener("keyup", function() {
-    InputState.getInstance().setState(InputStateType.None);
+    InputState.getInstance().setState(InputStateType.None, 0);
   });
 
   if (window.DeviceOrientationEvent) {
@@ -58,14 +60,19 @@ export function setupInput() {
 
       // Only trigger movement if tilt exceeds threshold (dead zone)
       if (Math.abs(gamma) > TILT_THRESHOLD) {
+        // Calculate normalized tilt amount (0 to 1) for acceleration
+        // Subtract threshold to account for dead zone, then normalize to max tilt
+        const tiltMagnitude = Math.abs(gamma) - TILT_THRESHOLD;
+        const normalizedTilt = Math.min(tiltMagnitude / (MAX_TILT - TILT_THRESHOLD), 1);
+        
         if (gamma > 0) {
-          InputState.getInstance().setState(InputStateType.Right);
+          InputState.getInstance().setState(InputStateType.Right, normalizedTilt);
         } else {
-          InputState.getInstance().setState(InputStateType.Left);
+          InputState.getInstance().setState(InputStateType.Left, normalizedTilt);
         }
       } else {
         // Within threshold range - no movement (dead zone)
-        InputState.getInstance().setState(InputStateType.None);
+        InputState.getInstance().setState(InputStateType.None, 0);
       }
     });
   } else {

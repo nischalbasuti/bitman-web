@@ -33,8 +33,13 @@ export default class Bitman {
     return this.shield ? TEXTURES.bitman.shielded : TEXTURES.bitman.default;
   }
 
-  moveLeft(deltaTime: number) {
-    const newX = this.sprite.x - 5 * deltaTime;
+  moveLeft(deltaTime: number, speedMultiplier: number = 1.0) {
+    // Base speed of 5, multiplied by speedMultiplier (0 to 1) for acceleration
+    // Minimum speed is 2 (40% of base) when at threshold, max is 5 (100%) at max tilt
+    const minSpeed = 2;
+    const maxSpeed = 5;
+    const speed = minSpeed + (maxSpeed - minSpeed) * speedMultiplier;
+    const newX = this.sprite.x - speed * deltaTime;
 
     if (!this.#isValidX(newX)) {
       this.idle();
@@ -45,8 +50,13 @@ export default class Bitman {
     this.sprite.x = newX;
   }
 
-  moveRight(deltaTime: number) {
-    const newX = this.sprite.x + 5 * deltaTime;
+  moveRight(deltaTime: number, speedMultiplier: number = 1.0) {
+    // Base speed of 5, multiplied by speedMultiplier (0 to 1) for acceleration
+    // Minimum speed is 2 (40% of base) when at threshold, max is 5 (100%) at max tilt
+    const minSpeed = 2;
+    const maxSpeed = 5;
+    const speed = minSpeed + (maxSpeed - minSpeed) * speedMultiplier;
+    const newX = this.sprite.x + speed * deltaTime;
 
     if (!this.#isValidX(newX)) {
       this.idle();
