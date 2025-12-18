@@ -35,8 +35,13 @@ export function initGame (
   container.x = screenWidth/2;
   container.y = screenHeight;
 
-  app.stage.addChild(container);
+  // Background container for parallax effect
+  const backgroundContainer = new Container();
+  backgroundContainer.x = screenWidth/2;
+  backgroundContainer.y = screenHeight;
+  app.stage.addChild(backgroundContainer);
 
+  app.stage.addChild(container);
 
   container.height = screenHeight;
   container.width = screenWidth;
@@ -64,13 +69,14 @@ export function initGame (
   }
 
   //----------------background------------------------
+  // Parallax factor: lower = slower movement (0.3 = moves 30% of bitman's movement)
+  const parallaxFactor = 0.3;
 
   const building0 = new Sprite(TEXTURES.building);
   building0.anchor.set(0, 1)
-  building0.x = building0.width / 3;
+  building0.x = -screenWidth / 3;
   building0.y = container.height;
   building0.scale.set(1, 0.8)
-
 
   const building1 = new Sprite(TEXTURES.building);
   building1.anchor.set(0, 1)
@@ -84,9 +90,15 @@ export function initGame (
   building2.y = container.height;
   building2.scale.set(0.8, 1)
 
-  container.addChild(building0);
-  container.addChild(building1);
-  container.addChild(building2);
+  // Add buildings to background container for parallax
+  backgroundContainer.addChild(building0);
+  backgroundContainer.addChild(building1);
+  backgroundContainer.addChild(building2);
+
+  // Scale background container to match main container
+  backgroundContainer.scale.x = scaleFactor * .95;
+  backgroundContainer.scale.y = scaleFactor * .95;
+  backgroundContainer.pivot.set(screenWidth/2, 0);
 
   //\----------------background------------------------
 
@@ -96,7 +108,12 @@ export function initGame (
   for (const bomb of bombs) container.addChild(bomb.sprite);
 
   function bitmanTicker(deltaTime: number) {
-    container.pivot.x = bitman.sprite.position.x;
+    const bitmanX = bitman.sprite.position.x;
+    container.pivot.x = bitmanX;
+    
+    // Parallax scrolling: move background at slower rate
+    backgroundContainer.pivot.x = bitmanX * parallaxFactor;
+    
     switch(InputState.getInstance().getState()) {
       case InputStateType.Left:
         bitman.moveLeft(deltaTime);
