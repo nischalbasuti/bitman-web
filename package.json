@@ -7,7 +7,6 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "postbuild": "mkdir ./dist/src && cp -r ./src/game_assets ./dist/src",
     "lint": "eslint . --ext .ts --ext .tsx",
     "lint-fix": "eslint . --ext .ts --ext .tsx --fix"
   },
