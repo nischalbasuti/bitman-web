@@ -22,3 +22,140 @@
   font-family: eightBit;
   src: url(./assets/PressStart2P-vaV7.ttf);
 }
+
+.homeScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #808080;
+}
+
+.homeScreenContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 3rem;
+  margin: 0;
+  color: #000;
+  text-shadow: 3px 3px 0px #fff;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #000;
+}
+
+.difficultyButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.difficultyButton {
+  font-family: eightBit;
+  font-size: 1.2rem;
+  padding: 1rem 2rem;
+  background-color: #fff;
+  color: #000;
+  border: 4px solid #000;
+  cursor: pointer;
+  transition: all 0.1s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.difficultyButton:hover {
+  background-color: #ffff00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.difficultyButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.bombCount {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.highScoresContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.highScoreDisplay {
+  font-size: 0.9rem;
+  color: #000;
+  margin: 0;
+}
+
+.gameOverOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.gameOverContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.gameOverTitle {
+  font-size: 3rem;
+  margin: 0;
+  color: #fff;
+  text-shadow: 4px 4px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.gameOverSubtitle {
+  font-size: 1.2rem;
+  margin: 0;
+  color: #ffff00;
+  text-shadow: 2px 2px 0px #000;
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

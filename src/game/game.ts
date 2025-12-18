@@ -5,7 +5,13 @@ import { setupInput } from './inputHandler';
 import InputState, { InputStateType } from './inputState';
 import { TEXTURES } from './TEXTURES';
 
-export function initGame (increamentScore: () => number, clearScore: () => number, canvasContainer: Element) {
+export function initGame (
+  increamentScore: () => number, 
+  clearScore: () => number, 
+  canvasContainer: Element,
+  bombCount: number,
+  onGameOver: () => void
+) {
   setupInput();
 
   // ...........Add canvas DOM.........................
@@ -52,13 +58,10 @@ export function initGame (increamentScore: () => number, clearScore: () => numbe
   const bitman = new Bitman(app, platform.width / 2, platform.y - platform.height, platform.width);
   bitman.sprite.y += bitman.sprite.height / 3
 
-  const bombs = [
-    new Bomb(app, platform.width, -screenHeight),
-    new Bomb(app, platform.width, -screenHeight),
-    new Bomb(app, platform.width, -screenHeight),
-    new Bomb(app, platform.width, -screenHeight),
-    new Bomb(app, platform.width, -screenHeight),
-  ];
+  const bombs: Bomb[] = [];
+  for (let i = 0; i < bombCount; i++) {
+    bombs.push(new Bomb(app, platform.width, -screenHeight));
+  }
 
   //----------------background------------------------
 
@@ -122,16 +125,20 @@ export function initGame (increamentScore: () => number, clearScore: () => numbe
 
         app.ticker.stop();
 
-        window.setTimeout(() => {
-          for (const b of bombs) b.respawn();
-          bitman.reset();
-          app.ticker.start();
-          clearScore();
-        }, 3_000)
+        onGameOver();
 
         break;
       }
     }
   });
 
+  // Return cleanup function
+  return () => {
+    app.ticker.stop();
+    const view = app.view;
+    if (view && canvasContainer && view.parentNode) {
+      canvasContainer.removeChild(view);
+    }
+    app.destroy(true, { children: true, texture: false, baseTexture: false });
+  };
 }
