@@ -233,22 +233,31 @@ export function initGame (
       }
       
       if (entity.sprite.getBounds().intersects(bitman.sprite.getBounds())) {
+        // Skip if already exploding and not fatal (hit shielded Bitman)
+        const isFatal = isBomb ? (entity as Bomb).isFatal() : (entity as Teeth).isFatal();
+        
+        if (!isFatal) {
+          // Already hit shielded Bitman, skip collision
+          continue;
+        }
+
         if (bitman.shield) {
-          // Bitman is shielded - remove shield and continue
+          // Bitman is shielded - trigger explosion/bite animation with isFatal=false
+          if (isBomb) {
+            (entity as Bomb).explode(null, false);
+          } else {
+            (entity as Teeth).explode(null, false);
+          }
+          
+          // Remove shield after animation starts
           bitman.shield = false;
           bitman.idle(); // Update texture back to normal
-          
-          if (isBomb) {
-            (entity as Bomb).explode(null);
-          } else {
-            (entity as Teeth).bite();
-          }
         } else {
-          // No shield - game over
+          // No shield - game over (isFatal defaults to true)
           if (isBomb) {
-            (entity as Bomb).explode(null);
+            (entity as Bomb).explode(null, true);
           } else {
-            (entity as Teeth).bite();
+            (entity as Teeth).explode(null, true);
           }
           bitman.die()
 

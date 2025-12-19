@@ -15,6 +15,7 @@ export default class Bomb {
   #exploadingFrame = 0;
   #exploadStartTime: Date = new Date();
   #onRespawn: (() => void) | null = null;
+  #isFatal = true;
 
   constructor(app: Application, maxX: number, maxY: number, onRespawn?: () => void) {
     this.sprite = new Sprite(TEXTURES.bomb.idle);
@@ -51,10 +52,17 @@ export default class Bomb {
     }
   }
 
-  explode(increamentScore: (() => number) | null) {
-    if (this.#exploading) return;
+  explode(increamentScore: (() => number) | null, isFatal: boolean = true) {
+    if (this.#exploading) {
+      // Already exploding - just update fatal flag if making it non-fatal
+      if (!isFatal) {
+        this.#isFatal = false;
+      }
+      return;
+    }
     this.#exploadStartTime = new Date();
     this.#exploading = true;
+    this.#isFatal = isFatal;
     this.sprite.texture = this.#texture();
 
     if (increamentScore) increamentScore();
@@ -71,9 +79,18 @@ export default class Bomb {
     this.#onRespawn = callback;
   }
 
+  isExploding(): boolean {
+    return this.#exploading;
+  }
+
+  isFatal(): boolean {
+    return this.#isFatal;
+  }
+
   respawn() {
     this.#exploadingFrame = 0;
     this.#exploading = false;
+    this.#isFatal = true;
     this.#acceleration = 0;
     this.sprite.texture = TEXTURES.bomb.idle;
     this.sprite.x = getRandomNumber(0, this.#maxX)

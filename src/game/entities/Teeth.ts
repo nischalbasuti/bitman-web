@@ -19,6 +19,7 @@ export default class Teeth {
   #explodingFrame = 0;
   #explodingStartTime: Date = new Date();
   #onRespawn: (() => void) | null = null;
+  #isFatal = true;
 
   constructor(app: Application, maxX: number, maxY: number, onRespawn?: () => void) {
     this.sprite = new Sprite(TEXTURES.teeth.biting[0]);
@@ -76,10 +77,17 @@ export default class Teeth {
     this.#bitingStartTime = new Date();
   }
 
-  explode(increamentScore: (() => number) | null = null) {
-    if (this.#exploding) return;
+  explode(increamentScore: (() => number) | null = null, isFatal: boolean = true) {
+    if (this.#exploding) {
+      // Already exploding - just update fatal flag if making it non-fatal
+      if (!isFatal) {
+        this.#isFatal = false;
+      }
+      return;
+    }
     this.#explodingStartTime = new Date();
     this.#exploding = true;
+    this.#isFatal = isFatal;
     this.sprite.texture = this.#texture();
 
     if (increamentScore) increamentScore();
@@ -87,6 +95,14 @@ export default class Teeth {
 
   setOnRespawn(callback: (() => void) | null) {
     this.#onRespawn = callback;
+  }
+
+  isExploding(): boolean {
+    return this.#exploding;
+  }
+
+  isFatal(): boolean {
+    return this.#isFatal;
   }
 
   update(deltaTime: number) {
@@ -101,6 +117,7 @@ export default class Teeth {
     this.#explodingFrame = 0;
     this.#biting = true;
     this.#exploding = false;
+    this.#isFatal = true;
     this.#bitingStartTime = new Date();
     this.#acceleration = 0;
     this.sprite.texture = TEXTURES.teeth.biting[0];
