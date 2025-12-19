@@ -37,7 +37,16 @@ export function initGame (
   container.x = screenWidth/2;
   container.y = screenHeight;
 
-  // Background container for parallax effect
+  // Add background sprite directly to stage (stays centered, no parallax)
+  const background = new Sprite(TEXTURES.background);
+  background.anchor.set(0.5, 0.5);
+  background.x = screenWidth / 2;
+  background.y = screenHeight / 2;
+  background.width = screenWidth;
+  background.height = screenHeight;
+  app.stage.addChildAt(background, 0); // Add at index 0 (behind everything)
+
+  // Background container for parallax effect (buildings only)
   const backgroundContainer = new Container();
   backgroundContainer.x = screenWidth/2;
   backgroundContainer.y = screenHeight;
@@ -108,7 +117,8 @@ export function initGame (
   building2.y = container.height;
   building2.scale.set(0.8, 1)
 
-  // Add buildings to background container for parallax
+  // Add background first (behind buildings), then buildings
+  // Background is already added above, now add buildings
   backgroundContainer.addChild(building0);
   backgroundContainer.addChild(building1);
   backgroundContainer.addChild(building2);
