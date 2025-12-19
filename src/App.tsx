@@ -203,6 +203,19 @@ const App: Component = () => {
                 <p class={styles.highScoreDisplay}>Hard High: {getHighScoreForDifficulty(5)}</p>
               )}
             </div>
+            <div class={styles.creditsContainer}>
+              <p class={styles.creditsText}>
+                Programming, art and everything by{' '}
+                <a href="https://github.com/nischalbasuti" target="_blank" rel="noopener noreferrer" class={styles.creditsLink}>
+                  Nischal Basuti
+                </a>
+              </p>
+              <div class={styles.creditsLinks}>
+                <a href="https://github.com/nischalbasuti/bitman-web" target="_blank" rel="noopener noreferrer" class={styles.creditsLink}>
+                  View on GitHub
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </Show>

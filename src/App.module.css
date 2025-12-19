@@ -114,6 +114,41 @@
   margin: 0;
 }
 
+.creditsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #000;
+  align-items: center;
+}
+
+.creditsText {
+  font-size: 0.8rem;
+  color: #000;
+  margin: 0;
+  text-align: center;
+}
+
+.creditsLinks {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.creditsLink {
+  color: #000;
+  text-decoration: underline;
+  font-size: 0.8rem;
+  transition: color 0.2s;
+}
+
+.creditsLink:hover {
+  color: #555;
+}
+
 .gameOverOverlay {
   position: absolute;
   top: 0;
