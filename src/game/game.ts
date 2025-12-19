@@ -2,6 +2,7 @@ import { Application, Container, Sprite } from 'pixi.js';
 import Bitman from './entities/Bitman';
 import Bomb from './entities/Bomb';
 import Teeth from './entities/Teeth';
+import Shield from './entities/Shield';
 import { setupInput } from './inputHandler';
 import InputState, { InputStateType } from './inputState';
 import { TEXTURES } from './TEXTURES';
@@ -63,6 +64,11 @@ export function initGame (
 
   const bitman = new Bitman(app, platform.width / 2, platform.y - platform.height, platform.width);
   bitman.sprite.y += bitman.sprite.height / 3
+
+  // Track score for shield spawning
+  let currentScore = 0;
+  let lastShieldScore = 0;
+  let shield: Shield | null = null;
 
   // Create unified array that can hold both bombs and teeth
   type FallingEntity = Bomb | Teeth;
@@ -148,6 +154,31 @@ export function initGame (
   app.ticker.add(bitmanTicker);
 
   app.ticker.add((deltaTime) => {
+    // Spawn shield every 20 points
+    if (currentScore > 0 && currentScore % 20 === 0 && currentScore !== lastShieldScore && shield === null) {
+      shield = new Shield(app, platform.width, -screenHeight);
+      container.addChild(shield.sprite);
+      lastShieldScore = currentScore;
+    }
+
+    // Update shield if it exists
+    if (shield !== null) {
+      shield.update(deltaTime);
+      
+      // Check if shield hit platform - remove it
+      if (shield.sprite.y >= platform.y - platform.height - bitman.sprite.height/3) {
+        container.removeChild(shield.sprite);
+        shield = null;
+      } else {
+        // Check collision with Bitman
+        if (shield.sprite.getBounds().intersects(bitman.sprite.getBounds())) {
+          bitman.shield = true;
+          bitman.idle(); // Update texture to shielded version
+          container.removeChild(shield.sprite);
+          shield = null;
+        }
+      }
+    }
     for (let i = 0; i < entities.length; i++) {
       const entity = entities[i];
       const isBomb = entity instanceof Bomb;
@@ -172,7 +203,10 @@ export function initGame (
               bomb.respawn();
             }
           });
-          bomb.explode(increamentScore);
+          bomb.explode(() => {
+            currentScore = increamentScore();
+            return currentScore;
+          });
         } else {
           // Teeth hit platform - play explosion animation
           const teeth = entity as Teeth;
@@ -191,23 +225,39 @@ export function initGame (
               teeth.respawn();
             }
           });
-          teeth.explode();
+          teeth.explode(() => {
+            currentScore = increamentScore();
+            return currentScore;
+          });
         }
       }
       
       if (entity.sprite.getBounds().intersects(bitman.sprite.getBounds())) {
-        if (isBomb) {
-          (entity as Bomb).explode(null);
+        if (bitman.shield) {
+          // Bitman is shielded - remove shield and continue
+          bitman.shield = false;
+          bitman.idle(); // Update texture back to normal
+          
+          if (isBomb) {
+            (entity as Bomb).explode(null);
+          } else {
+            (entity as Teeth).bite();
+          }
         } else {
-          (entity as Teeth).bite();
+          // No shield - game over
+          if (isBomb) {
+            (entity as Bomb).explode(null);
+          } else {
+            (entity as Teeth).bite();
+          }
+          bitman.die()
+
+          app.ticker.stop();
+
+          onGameOver();
+
+          break;
         }
-        bitman.die()
-
-        app.ticker.stop();
-
-        onGameOver();
-
-        break;
       }
     }
   });

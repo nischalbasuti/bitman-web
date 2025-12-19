@@ -76,11 +76,13 @@ export default class Teeth {
     this.#bitingStartTime = new Date();
   }
 
-  explode() {
+  explode(increamentScore: (() => number) | null = null) {
     if (this.#exploding) return;
     this.#explodingStartTime = new Date();
     this.#exploding = true;
     this.sprite.texture = this.#texture();
+
+    if (increamentScore) increamentScore();
   }
 
   setOnRespawn(callback: (() => void) | null) {
