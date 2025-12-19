@@ -6,6 +6,7 @@ import Shield from './entities/Shield';
 import { setupInput } from './inputHandler';
 import InputState, { InputStateType } from './inputState';
 import { TEXTURES } from './TEXTURES';
+import { getRandomNumber } from './utils';
 
 export function initGame (
   increamentScore: () => number, 
@@ -27,7 +28,7 @@ export function initGame (
     width: screenWidth,
     height: screenHeight,
     resolution: window.devicePixelRatio,
-    backgroundColor: 0xD3D3D3,
+    backgroundColor: 0x191970, // Midnight blue
   });
 
   canvasContainer.appendChild(app.view);
@@ -37,14 +38,11 @@ export function initGame (
   container.x = screenWidth/2;
   container.y = screenHeight;
 
-  // Add background sprite directly to stage (stays centered, no parallax)
-  const background = new Sprite(TEXTURES.background);
-  background.anchor.set(0.5, 0.5);
-  background.x = screenWidth / 2;
-  background.y = screenHeight / 2;
-  background.width = screenWidth;
-  background.height = screenHeight;
-  app.stage.addChildAt(background, 0); // Add at index 0 (behind everything)
+  // Sky container for moon and stars parallax (slower than buildings)
+  const skyContainer = new Container();
+  skyContainer.x = 0;
+  skyContainer.y = 0;
+  app.stage.addChild(skyContainer);
 
   // Background container for parallax effect (buildings only)
   const backgroundContainer = new Container();
@@ -95,6 +93,45 @@ export function initGame (
     entities.push(new Teeth(app, platform.width, -screenHeight));
   }
 
+  //----------------sky elements (moon and stars)------------------------
+  const skyParallaxFactor = 0.15; // Slower than buildings
+
+  // Add moon and stars to sky container
+  const starCount = getRandomNumber(20, 30);
+  const stars: Array<{ sprite: Sprite; frameIndex: number; lastFrameTime: Date }> = [];
+  
+  for (let i = 0; i < starCount; i++) {
+    const starSprite = new Sprite(TEXTURES.star[0]);
+    starSprite.anchor.set(0.5, 0.5);
+    // Random position across screen
+    starSprite.x = getRandomNumber(-screenWidth/2, screenWidth + screenWidth/2);
+    starSprite.y = getRandomNumber(0, screenHeight * 0.8); // Upper 80% of screen
+    // Random initial frame
+    const initialFrame = getRandomNumber(0, TEXTURES.star.length - 1);
+    starSprite.texture = TEXTURES.star[initialFrame];
+    
+    stars.push({
+      sprite: starSprite,
+      frameIndex: initialFrame,
+      lastFrameTime: new Date(),
+    });
+    
+    skyContainer.addChild(starSprite);
+  }
+
+  const moon = new Sprite(TEXTURES.moon);
+  moon.scale.set(2, 2);
+  moon.anchor.set(0.5, 0.5);
+  moon.x = screenWidth * 0.75; // Position in top-right area
+  moon.y = screenHeight * 0.2; // Near top
+  skyContainer.addChild(moon);
+
+
+  // Scale sky container to match main container
+  skyContainer.scale.x = scaleFactor * .95;
+  skyContainer.scale.y = scaleFactor * .95;
+  skyContainer.pivot.set(screenWidth/2, 0);
+
   //----------------background------------------------
   // Parallax factor: lower = slower movement (0.3 = moves 30% of bitman's movement)
   const parallaxFactor = 0.3;
@@ -139,7 +176,8 @@ export function initGame (
     const bitmanX = bitman.sprite.position.x;
     container.pivot.x = bitmanX;
     
-    // Parallax scrolling: move background at slower rate
+    // Parallax scrolling: sky moves slowest, buildings move faster
+    skyContainer.pivot.x = bitmanX * skyParallaxFactor;
     backgroundContainer.pivot.x = bitmanX * parallaxFactor;
     
     const inputState = InputState.getInstance();
@@ -164,6 +202,16 @@ export function initGame (
   app.ticker.add(bitmanTicker);
 
   app.ticker.add((deltaTime) => {
+    // Animate stars (50ms per frame, same as other animations)
+    const currentTime = new Date();
+    for (const star of stars) {
+      if (currentTime.getTime() - star.lastFrameTime.getTime() > 50) {
+        star.frameIndex = (star.frameIndex + 1) % TEXTURES.star.length;
+        star.sprite.texture = TEXTURES.star[star.frameIndex];
+        star.lastFrameTime = new Date();
+      }
+    }
+
     // Spawn shield every 20 points
     if (currentScore > 0 && currentScore % 20 === 0 && currentScore !== lastShieldScore && shield === null) {
       shield = new Shield(app, platform.width, -screenHeight);

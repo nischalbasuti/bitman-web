@@ -1,4 +1,4 @@
-import { Assets } from "pixi.js"
+import { Assets, Texture, Rectangle } from "pixi.js"
 
 import bitman_default_still from "./assets/bitman/default/still.png"
 import bitman_default_moveLeft from "./assets/bitman/default/moving_left.png"
@@ -12,7 +12,8 @@ import dead from "./assets/bitman/default/dead.png"
 
 import platform from "./assets/platform.png"
 import building from "./assets/building.png"
-import background from "./assets/background.png"
+import moon from "./assets/moon.png"
+import star from "./assets/star.png"
 
 import bomb_expload_0 from "./assets/bomb/explosion_frames/0.png"
 import bomb_expload_1 from "./assets/bomb/explosion_frames/1.png"
@@ -33,6 +34,27 @@ import teeth_explode_4 from "./assets/teeth/explosion_frames/4.png"
 import teeth_explode_5 from "./assets/teeth/explosion_frames/5.png"
 
 import shield from "./assets/shield.png"
+
+// Load star sprite sheet and parse into frames
+const starSheetTexture = await Assets.load(star);
+const starFrames: Texture[] = [];
+// Sprite sheet: 16x24px per frame, 2 columns, 3 rows
+// Get actual texture dimensions
+const sheetWidth = starSheetTexture.width;
+const sheetHeight = starSheetTexture.height;
+// Calculate frame dimensions from sheet size
+const frameWidth = sheetWidth / 2; // 2 columns
+const frameHeight = sheetHeight / 3; // 3 rows
+// Extract frames in order: (0,0), (frameWidth,0), (0,frameHeight), (frameWidth,frameHeight), (0,2*frameHeight), (frameWidth,2*frameHeight)
+for (let row = 0; row < 3; row++) {
+  for (let col = 0; col < 2; col++) {
+    const frame = new Texture(
+      starSheetTexture.baseTexture,
+      new Rectangle(col * frameWidth, row * frameHeight, frameWidth, frameHeight)
+    );
+    starFrames.push(frame);
+  }
+}
 
 export const TEXTURES = {
   bitman: {
@@ -78,5 +100,6 @@ export const TEXTURES = {
   shield: await Assets.load(shield),
   platform: await Assets.load(platform),
   building: await Assets.load(building),
-  background: await Assets.load(background),
+  moon: await Assets.load(moon),
+  star: starFrames,
 }
