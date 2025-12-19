@@ -21,6 +21,17 @@ import bomb_expload_3 from "./assets/bomb/explosion_frames/3.png"
 import bomb_expload_4 from "./assets/bomb/explosion_frames/4.png"
 import bomb_expload_5 from "./assets/bomb/explosion_frames/5.png"
 
+import teeth_biting_0 from "./assets/teeth/biting_frames/0.png"
+import teeth_biting_1 from "./assets/teeth/biting_frames/1.png"
+import teeth_biting_2 from "./assets/teeth/biting_frames/2.png"
+
+import teeth_explode_0 from "./assets/teeth/explosion_frames/0.png"
+import teeth_explode_1 from "./assets/teeth/explosion_frames/1.png"
+import teeth_explode_2 from "./assets/teeth/explosion_frames/2.png"
+import teeth_explode_3 from "./assets/teeth/explosion_frames/3.png"
+import teeth_explode_4 from "./assets/teeth/explosion_frames/4.png"
+import teeth_explode_5 from "./assets/teeth/explosion_frames/5.png"
+
 import shield from "./assets/shield.png"
 
 export const TEXTURES = {
@@ -46,6 +57,22 @@ export const TEXTURES = {
       await Assets.load(bomb_expload_3),
       await Assets.load(bomb_expload_4),
       await Assets.load(bomb_expload_5),
+    ]
+  },
+  teeth: {
+    idle: await Assets.load(teeth_biting_0),
+    biting: [
+      await Assets.load(teeth_biting_0),
+      await Assets.load(teeth_biting_1),
+      await Assets.load(teeth_biting_2),
+    ],
+    explosion: [
+      await Assets.load(teeth_explode_0),
+      await Assets.load(teeth_explode_1),
+      await Assets.load(teeth_explode_2),
+      await Assets.load(teeth_explode_3),
+      await Assets.load(teeth_explode_4),
+      await Assets.load(teeth_explode_5),
     ]
   },
   shield: await Assets.load(shield),

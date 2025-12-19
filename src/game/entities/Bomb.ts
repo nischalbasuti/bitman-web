@@ -14,8 +14,9 @@ export default class Bomb {
   #exploading = false;
   #exploadingFrame = 0;
   #exploadStartTime: Date = new Date();
+  #onRespawn: (() => void) | null = null;
 
-  constructor(app: Application, maxX: number, maxY: number) {
+  constructor(app: Application, maxX: number, maxY: number, onRespawn?: () => void) {
     this.sprite = new Sprite(TEXTURES.bomb.idle);
 
     this.sprite.anchor.x = 0.5;
@@ -23,6 +24,7 @@ export default class Bomb {
 
     this.#maxX = maxX;
     this.#maxY = maxY;
+    this.#onRespawn = onRespawn || null;
 
     this.app = app;
 
@@ -37,7 +39,11 @@ export default class Bomb {
         this.#exploadStartTime = new Date();
       }
       if (this.#exploadingFrame > TEXTURES.bomb.explosion.length) {
-        this.respawn();
+        if (this.#onRespawn) {
+          this.#onRespawn();
+        } else {
+          this.respawn();
+        }
       }
       return TEXTURES.bomb.explosion[this.#exploadingFrame];
     } else {
@@ -59,6 +65,10 @@ export default class Bomb {
 
     if (!this.#exploading) this.sprite.y += this.#acceleration * deltaTime;
     this.#acceleration += 0.05;
+  }
+
+  setOnRespawn(callback: (() => void) | null) {
+    this.#onRespawn = callback;
   }
 
   respawn() {

@@ -1,6 +1,7 @@
 import { Application, Container, Sprite } from 'pixi.js';
 import Bitman from './entities/Bitman';
 import Bomb from './entities/Bomb';
+import Teeth from './entities/Teeth';
 import { setupInput } from './inputHandler';
 import InputState, { InputStateType } from './inputState';
 import { TEXTURES } from './TEXTURES';
@@ -63,9 +64,20 @@ export function initGame (
   const bitman = new Bitman(app, platform.width / 2, platform.y - platform.height, platform.width);
   bitman.sprite.y += bitman.sprite.height / 3
 
-  const bombs: Bomb[] = [];
-  for (let i = 0; i < bombCount; i++) {
-    bombs.push(new Bomb(app, platform.width, -screenHeight));
+  // Create unified array that can hold both bombs and teeth
+  type FallingEntity = Bomb | Teeth;
+  const entities: FallingEntity[] = [];
+  
+  // Randomly split total count between bombs and teeth
+  const teethCount = Math.floor(Math.random() * (bombCount + 1));
+  const actualBombCount = bombCount - teethCount;
+
+  for (let i = 0; i < actualBombCount; i++) {
+    entities.push(new Bomb(app, platform.width, -screenHeight));
+  }
+
+  for (let i = 0; i < teethCount; i++) {
+    entities.push(new Teeth(app, platform.width, -screenHeight));
   }
 
   //----------------background------------------------
@@ -105,7 +117,7 @@ export function initGame (
   container.addChild(platform);
   container.addChild(bitman.sprite);
 
-  for (const bomb of bombs) container.addChild(bomb.sprite);
+  for (const entity of entities) container.addChild(entity.sprite);
 
   function bitmanTicker(deltaTime: number) {
     const bitmanX = bitman.sprite.position.x;
@@ -136,11 +148,59 @@ export function initGame (
   app.ticker.add(bitmanTicker);
 
   app.ticker.add((deltaTime) => {
-    for (const bomb of bombs) {
-      bomb.update(deltaTime);
-      if (bomb.sprite.y >= platform.y - platform.height - bitman.sprite.height/3) bomb.explode(increamentScore);
-      if (bomb.sprite.getBounds().intersects(bitman.sprite.getBounds())) {
-        bomb.explode(null);
+    for (let i = 0; i < entities.length; i++) {
+      const entity = entities[i];
+      const isBomb = entity instanceof Bomb;
+      
+      entity.update(deltaTime);
+      
+      if (entity.sprite.y >= platform.y - platform.height - bitman.sprite.height/3) {
+        if (isBomb) {
+          const bomb = entity as Bomb;
+          // Set up respawn callback to potentially switch type
+          bomb.setOnRespawn(() => {
+            const shouldSwitch = Math.random() < 0.5;
+            if (shouldSwitch) {
+              // Switch to teeth
+              container.removeChild(bomb.sprite);
+              const newTeeth = new Teeth(app, platform.width, -screenHeight);
+              entities[i] = newTeeth;
+              container.addChild(newTeeth.sprite);
+            } else {
+              // Stay as bomb
+              bomb.setOnRespawn(null);
+              bomb.respawn();
+            }
+          });
+          bomb.explode(increamentScore);
+        } else {
+          // Teeth hit platform - play explosion animation
+          const teeth = entity as Teeth;
+          // Set up respawn callback to potentially switch type
+          teeth.setOnRespawn(() => {
+            const shouldSwitch = Math.random() < 0.5;
+            if (shouldSwitch) {
+              // Switch to bomb
+              container.removeChild(teeth.sprite);
+              const newBomb = new Bomb(app, platform.width, -screenHeight);
+              entities[i] = newBomb;
+              container.addChild(newBomb.sprite);
+            } else {
+              // Stay as teeth
+              teeth.setOnRespawn(null);
+              teeth.respawn();
+            }
+          });
+          teeth.explode();
+        }
+      }
+      
+      if (entity.sprite.getBounds().intersects(bitman.sprite.getBounds())) {
+        if (isBomb) {
+          (entity as Bomb).explode(null);
+        } else {
+          (entity as Teeth).bite();
+        }
         bitman.die()
 
         app.ticker.stop();
