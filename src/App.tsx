@@ -170,7 +170,13 @@ const App: Component = () => {
             <p class={styles.deployTime}>Deployed: {formatDeployTime(DEPLOY_TIME)}</p>
             <div class={styles.instructions}>
               <p class={styles.instructionsText}>
-                Help Bitman survive as long as possible by dodging falling bombs and teeth! Collect shields to give Bitman an extra edge by surviving one hit. Tilt your phone or use arrow keys to move Bitman.
+                Help Bitman survive as long as possible by dodging falling bombs and teeth!
+                <br />
+                <br />
+                Collect shields to give Bitman an extra edge by surviving one hit.
+                <br />
+                <br />
+                Tilt your phone or use arrow keys to move Bitman.
               </p>
             </div>
             <h2 class={styles.subtitle}>Select Difficulty</h2>
