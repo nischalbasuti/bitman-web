@@ -55,8 +55,9 @@ const App: Component = () => {
   const [showHomeScreen, setShowHomeScreen] = createSignal(true);
   const [showGameOver, setShowGameOver] = createSignal(false);
   const [bombCount, setBombCount] = createSignal<number | null>(null);
+  const [isPaused, setIsPaused] = createSignal(false);
 
-  let gameCleanup: (() => void) | null = null;
+  let gameControls: { cleanup: () => void; pause: () => void; resume: () => void } | null = null;
 
   // Load high scores from localStorage on mount
   onMount(() => {
@@ -102,7 +103,7 @@ const App: Component = () => {
       // Clear any existing canvas
       canvasContainer.innerHTML = '';
       
-      const cleanup = initGame(
+      const controls = initGame(
         increamentScore, 
         clearScore, 
         canvasContainer,
@@ -110,9 +111,13 @@ const App: Component = () => {
         () => {
           // Game over callback - show game over screen
           setShowGameOver(true);
+        },
+        (paused: boolean) => {
+          // Pause state change callback
+          setIsPaused(paused);
         }
       );
-      gameCleanup = cleanup;
+      gameControls = controls;
     }
   }
 
@@ -128,10 +133,11 @@ const App: Component = () => {
       }
     }
 
-    if (gameCleanup) {
-      gameCleanup();
-      gameCleanup = null;
+    if (gameControls) {
+      gameControls.cleanup();
+      gameControls = null;
     }
+    setIsPaused(false);
     clearScore();
     setShowHomeScreen(true);
     setShowGameOver(false);
@@ -147,6 +153,22 @@ const App: Component = () => {
             <p class={styles.deployTime}>Deployed: {formatDeployTime(DEPLOY_TIME)}</p>
           </div>
           <div id="canvas-container"></div>
+          <Show when={!showGameOver()}>
+            <button 
+              class={styles.pauseButton}
+              onClick={() => {
+                if (gameControls) {
+                  if (isPaused()) {
+                    gameControls.resume();
+                  } else {
+                    gameControls.pause();
+                  }
+                }
+              }}
+            >
+              {isPaused() ? 'Resume' : 'Pause'}
+            </button>
+          </Show>
           <div id="score-container">
             <p>
               high score: {getHighScoreForDifficulty(bombCount())}
@@ -154,6 +176,23 @@ const App: Component = () => {
               score: {score()}
             </p>
           </div>
+          <Show when={isPaused()}>
+            <div class={styles.pauseOverlay}>
+              <div class={styles.pauseContent}>
+                <h1 class={styles.pauseTitle}>PAUSED</h1>
+                <button 
+                  class={styles.pauseButton}
+                  onClick={() => {
+                    if (gameControls) {
+                      gameControls.resume();
+                    }
+                  }}
+                >
+                  Resume
+                </button>
+              </div>
+            </div>
+          </Show>
           <Show when={showGameOver()}>
             <div class={styles.gameOverOverlay} onClick={returnToHome}>
               <div class={styles.gameOverContent}>

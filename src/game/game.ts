@@ -13,7 +13,8 @@ export function initGame (
   clearScore: () => number, 
   canvasContainer: Element,
   bombCount: number,
-  onGameOver: () => void
+  onGameOver: () => void,
+  onPauseChange?: (isPaused: boolean) => void
 ) {
   setupInput();
 
@@ -329,13 +330,28 @@ export function initGame (
     }
   });
 
-  // Return cleanup function
-  return () => {
+  // Pause/resume functions
+  const pause = () => {
     app.ticker.stop();
-    const view = app.view;
-    if (view && canvasContainer && view.parentNode) {
-      canvasContainer.removeChild(view);
-    }
-    app.destroy(true, { children: true, texture: false, baseTexture: false });
+    if (onPauseChange) onPauseChange(true);
+  };
+
+  const resume = () => {
+    app.ticker.start();
+    if (onPauseChange) onPauseChange(false);
+  };
+
+  // Return cleanup function and pause/resume controls
+  return {
+    cleanup: () => {
+      app.ticker.stop();
+      const view = app.view;
+      if (view && canvasContainer && view.parentNode) {
+        canvasContainer.removeChild(view);
+      }
+      app.destroy(true, { children: true, texture: false, baseTexture: false });
+    },
+    pause,
+    resume,
   };
 }

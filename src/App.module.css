@@ -166,6 +166,58 @@
   color: #555;
 }
 
+.pauseButton {
+  font-family: eightBit;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #fff;
+  color: #000;
+  border: 3px solid #000;
+  cursor: pointer;
+  margin: 0.5rem auto;
+  display: block;
+  transition: all 0.1s;
+}
+
+.pauseButton:hover {
+  background-color: #ffff00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.pauseButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.pauseOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.pauseContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.pauseTitle {
+  font-size: 2.5rem;
+  margin: 0;
+  color: #fff;
+  text-shadow: 4px 4px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000;
+}
+
 .gameOverOverlay {
   position: absolute;
   top: 0;
